@@ -33,12 +33,12 @@ class Model:
 			activation=activations.relu,
 			input_shape=input_size,
 		))
+		tf.keras.layers.BatchNormalization()
 		# Size: 53 x 53 x 3
 		self.model.add(layers.MaxPool2D(
 			pool_size=3,
 			strides=2,
 		))
-		tf.keras.layers.BatchNormalization()
 		tf.keras.layers.Dropout(0.1, noise_shape=None, seed=None,)
 		# Size: 26 x 26 x 16
 		self.model.add(layers.Conv2D(
@@ -123,7 +123,7 @@ cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weigh
 history = model.model.fit(
 	train,
 	batch_size = 256,
-	epochs = 1,
+	epochs = 670,
 	verbose = 1,
 	validation_data = validation,
 	validation_batch_size = 32
