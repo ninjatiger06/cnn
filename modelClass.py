@@ -25,6 +25,7 @@ class Model:
 			activation=activations.relu,
 			input_shape=input_size,
 		))
+		tf.keras.layers.BatchNormalization()
 		# Size: 115 x 115 x 3
 		self.model.add(layers.Conv2D(
 			12, 
@@ -47,6 +48,7 @@ class Model:
 			strides=2,
 			activation=activations.relu,
 		))
+		tf.keras.layers.BatchNormalization()
 		# Size: 12 x 12 x 32
 		self.model.add(layers.Conv2D(
 			32,
@@ -54,6 +56,7 @@ class Model:
 			strides=1,
 			activation=activations.relu,
 		))
+		tf.keras.layers.BatchNormalization()
 		# Size: 11 x 11 x 64
 		self.model.add(layers.Conv2D(
 			64,
@@ -61,6 +64,7 @@ class Model:
 			strides=1,
 			activation=activations.relu,
 		))
+		tf.keras.layers.BatchNormalization()
 		# # Size: 11 x 11
 		# self.model.add(layers.MaxPool2D(
 		# 	pool_size=2,
@@ -123,7 +127,7 @@ cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weigh
 history = model.model.fit(
 	train,
 	batch_size = 256,
-	epochs = 670,
+	epochs = 30,
 	verbose = 1,
 	validation_data = validation,
 	validation_batch_size = 32
