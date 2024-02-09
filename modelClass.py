@@ -19,7 +19,7 @@ class Model:
 		# First layer of a Sequential Model should get input_shape as arg
 		# Input: 239 x 239 x 3
 		self.model.add(layers.Conv2D(
-			12, 
+			16, 
 			11, 
 			strides=2, 
 			activation=activations.relu,
@@ -28,28 +28,46 @@ class Model:
 		tf.keras.layers.BatchNormalization()
 		# Size: 115 x 115 x 3
 		self.model.add(layers.Conv2D(
-			12, 
-			11, 
-			strides=2, 
+			16, 
+			3, 
+			strides=1, 
 			activation=activations.relu,
 			input_shape=input_size,
 		))
 		tf.keras.layers.BatchNormalization()
-		# Size: 53 x 53 x 3
+		# Size: 113 x 113 x 3
+		self.model.add(layers.Conv2D(
+			18, 
+			3, 
+			strides=1, 
+			activation=activations.relu,
+			input_shape=input_size,
+		))
+		tf.keras.layers.BatchNormalization()
+		# Size: 111 x 111 x 3
+		self.model.add(layers.Conv2D(
+			18, 
+			3, 
+			strides=1, 
+			activation=activations.relu,
+			input_shape=input_size,
+		))
+		tf.keras.layers.BatchNormalization()
+		# Size: 109 x 109 x 3
 		self.model.add(layers.MaxPool2D(
 			pool_size=3,
 			strides=2,
 		))
 		tf.keras.layers.Dropout(0.1, noise_shape=None, seed=None,)
-		# Size: 26 x 26 x 16
+		# Size: 54 x 54 x 16
 		self.model.add(layers.Conv2D(
-			16,
-			4,
-			strides=2,
+			32,
+			3,
+			strides=1,
 			activation=activations.relu,
 		))
 		tf.keras.layers.BatchNormalization()
-		# Size: 12 x 12 x 32
+		# Size: 52 x 52 x 32
 		self.model.add(layers.Conv2D(
 			32,
 			2,
@@ -57,28 +75,32 @@ class Model:
 			activation=activations.relu,
 		))
 		tf.keras.layers.BatchNormalization()
-		# Size: 11 x 11 x 64
+		# Size: 60 x 60 x 64
+		# if run into memory issues cut to 32
 		self.model.add(layers.Conv2D(
 			64,
-			1,
+			3,
 			strides=1,
 			activation=activations.relu,
 		))
 		tf.keras.layers.BatchNormalization()
-		# # Size: 11 x 11
-		# self.model.add(layers.MaxPool2D(
-		# 	pool_size=2,
-		# 	strides=1,
-		# ))
-		# Size: 11 x 11 x 64
+		# # Size: 58 x 58
+		self.model.add(layers.MaxPool2D(
+			pool_size=2,
+			strides=2,
+		))
+		# Size: 29 x 29 x 64
 		self.model.add(layers.Flatten())
-		# Size: 7744
+		# Size: 53824
+		# if NAN is loss value, model is too big
 		self.model.add(layers.Dense(4096, activation=activations.relu))
+		tf.keras.layers.Dropout(0.3, noise_shape=None, seed=None,)
 		self.model.add(layers.Dense(1024, activation=activations.relu))
+		tf.keras.layers.Dropout(0.3, noise_shape=None, seed=None,)
 		self.model.add(layers.Dense(512, activation=activations.relu))
 		# Size of last Dense layer MUST match # of classes
 		self.model.add(layers.Dense(151, activation=activations.softmax))
-		self.optimizer = optimizers.Adam(learning_rate=0.0001)
+		self.optimizer = optimizers.Adam(learning_rate=0.00001)
 		self.loss = losses.CategoricalCrossentropy()
 		self.model.compile(
 			loss = self.loss,

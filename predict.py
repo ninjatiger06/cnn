@@ -6,11 +6,6 @@
 import cv2
 import argparse
 import os
-import tensorflow.keras.applications.vgg16 as vgg16
-
-# def prepImage(image):
-# 	image = cv2.resize(image, (224, 224))
-# 	return image
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to image prediction set")
