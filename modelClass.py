@@ -9,9 +9,6 @@ import tensorflow.data as data
 from os import listdir
 import os.path
 
-# Skipping getting data for now
-
-# VERSION 1: Class-based model
 class Model:
 	def __init__(self, input_size):
 		self.model = tf.keras.Sequential()
