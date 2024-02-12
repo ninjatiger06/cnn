@@ -21,6 +21,7 @@ class Model:
 			strides=2, 
 			activation=activations.relu,
 			input_shape=input_size,
+			kernel_regularizer=tf.keras.regularizers.L2(),
 		))
 		tf.keras.layers.BatchNormalization()
 		# Size: 115 x 115 x 3
@@ -30,6 +31,7 @@ class Model:
 			strides=1, 
 			activation=activations.relu,
 			input_shape=input_size,
+			kernel_regularizer=tf.keras.regularizers.L2(),
 		))
 		tf.keras.layers.BatchNormalization()
 		# Size: 113 x 113 x 3
@@ -39,6 +41,7 @@ class Model:
 			strides=1, 
 			activation=activations.relu,
 			input_shape=input_size,
+			kernel_regularizer=tf.keras.regularizers.L2(),
 		))
 		tf.keras.layers.BatchNormalization()
 		# Size: 111 x 111 x 3
@@ -48,6 +51,7 @@ class Model:
 			strides=1, 
 			activation=activations.relu,
 			input_shape=input_size,
+			kernel_regularizer=tf.keras.regularizers.L2(),
 		))
 		tf.keras.layers.BatchNormalization()
 		# Size: 109 x 109 x 3
@@ -62,6 +66,7 @@ class Model:
 			3,
 			strides=1,
 			activation=activations.relu,
+			kernel_regularizer=tf.keras.regularizers.L2(),
 		))
 		tf.keras.layers.BatchNormalization()
 		# Size: 52 x 52 x 32
@@ -70,6 +75,7 @@ class Model:
 			2,
 			strides=1,
 			activation=activations.relu,
+			kernel_regularizer=tf.keras.regularizers.L2(),
 		))
 		tf.keras.layers.BatchNormalization()
 		# Size: 60 x 60 x 64
@@ -79,6 +85,7 @@ class Model:
 			3,
 			strides=1,
 			activation=activations.relu,
+			kernel_regularizer=tf.keras.regularizers.L2(),
 		))
 		tf.keras.layers.BatchNormalization()
 		# # Size: 58 x 58
@@ -96,7 +103,7 @@ class Model:
 		tf.keras.layers.Dropout(0.3, noise_shape=None, seed=None,)
 		self.model.add(layers.Dense(512, activation=activations.relu))
 		# Size of last Dense layer MUST match # of classes
-		self.model.add(layers.Dense(151, activation=activations.softmax))
+		self.model.add(layers.Dense(33, activation=activations.softmax))
 		self.optimizer = optimizers.Adam(learning_rate=0.00001)
 		self.loss = losses.CategoricalCrossentropy()
 		self.model.compile(
@@ -114,7 +121,7 @@ save_path = "model/"
 plotHistoryPath = "modelHistory.json"
 
 train, validation = utils.image_dataset_from_directory(
-	'PokemonData',
+	'keptPokemon',
 	label_mode = 'categorical',
 	batch_size = 256,
 	image_size = (239, 239),
@@ -143,20 +150,11 @@ model.model.load_weights(save_path)
 
 cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weights_only = True, verbose = 1)
 
-history = model.model.fit(
-	train,
-	batch_size = 256,
-	epochs = 30,
-	verbose = 1,
-	validation_data = validation,
-	validation_batch_size = 32
-)
-
 print(f"Saving model to {save_path}")
 model.model.save(save_path)
 
 import json
-print(f"Saving training history to {plotHistoryPath}")
+# print(f"Saving training history to {plotHistoryPath}")
 
 old_history = {
 	"accuracy": [],
@@ -178,3 +176,12 @@ if old_history is not None:
 
 with open(plotHistoryPath, "w") as f:
 	json.dump(old_history, f, indent=4)
+
+history = model.model.fit(
+	train,
+	batch_size = 256,
+	epochs = 30,
+	verbose = 1,
+	validation_data = validation,
+	validation_batch_size = 32
+)
