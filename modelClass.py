@@ -103,7 +103,7 @@ class Model:
 		tf.keras.layers.Dropout(0.3, noise_shape=None, seed=None,)
 		self.model.add(layers.Dense(512, activation=activations.relu))
 		# Size of last Dense layer MUST match # of classes
-		self.model.add(layers.Dense(33, activation=activations.softmax))
+		self.model.add(layers.Dense(21, activation=activations.softmax))
 		self.optimizer = optimizers.Adam(learning_rate=0.00001)
 		self.loss = losses.CategoricalCrossentropy()
 		self.model.compile(
