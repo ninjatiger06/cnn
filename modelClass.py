@@ -146,12 +146,21 @@ train = train.cache().prefetch(buffer_size = data.AUTOTUNE)
 validation = validation.cache().prefetch(buffer_size = data.AUTOTUNE)
 
 # load previous weights if they exist
-model.model.load_weights(save_path)
+# model.model.load_weights(save_path)
 
 cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weights_only = True, verbose = 1)
 
-print(f"Saving model to {save_path}")
-model.model.save(save_path)
+history = model.model.fit(
+	train,
+	batch_size = 256,
+	epochs = 30,
+	verbose = 1,
+	validation_data = validation,
+	validation_batch_size = 32
+)
+
+# print(f"Saving model to {save_path}")
+# model.model.save(save_path)
 
 import json
 # print(f"Saving training history to {plotHistoryPath}")
@@ -176,12 +185,3 @@ if old_history is not None:
 
 with open(plotHistoryPath, "w") as f:
 	json.dump(old_history, f, indent=4)
-
-history = model.model.fit(
-	train,
-	batch_size = 256,
-	epochs = 30,
-	verbose = 1,
-	validation_data = validation,
-	validation_batch_size = 32
-)
