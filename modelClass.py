@@ -16,7 +16,7 @@ class Model:
 		# First layer of a Sequential Model should get input_shape as arg
 		# Input: 239 x 239 x 3
 		self.model.add(layers.Conv2D(
-			16, 
+			16,
 			11, 
 			strides=2, 
 			activation=activations.relu,
@@ -159,11 +159,11 @@ history = model.model.fit(
 	validation_batch_size = 32
 )
 
-# print(f"Saving model to {save_path}")
-# model.model.save(save_path)
+print(f"Saving model to {save_path}")
+model.model.save(save_path)
 
 import json
-# print(f"Saving training history to {plotHistoryPath}")
+print(f"Saving training history to {plotHistoryPath}")
 
 old_history = {
 	"accuracy": [],
