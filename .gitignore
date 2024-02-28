@@ -1,4 +1,7 @@
-/Bugs
+/Bugs/model
+/Bugs/test
+/Bugs/train
+/Bugs/valid
 /PokemonData
 /model
 /keptPokemon

@@ -4,6 +4,7 @@ import tensorflow.keras.models as models
 import tensorflow.keras.layers as layers
 import tensorflow.keras.losses as losses
 import tensorflow.keras.optimizers as optimizers
+import tensorflow.keras.activations as activations
 import tensorflow.keras.utils as utils
 import tensorflow.keras.preprocessing as preprocessing
 import tensorflow.keras.callbacks as callbacks
@@ -37,7 +38,7 @@ pprint(class_names)
 # into the saved model.
 
 class Net():
-	def __init__(self, image_size):
+	def __init__(self, input_size):
 		self.model = tf.keras.Sequential()
 		# depth, frame size are first 2 args
 		# First layer of a Sequential Model should get input_shape as arg
@@ -131,7 +132,15 @@ class Net():
 		self.model.add(layers.Dense(512, activation=activations.relu))
 		# Size of last Dense layer MUST match # of classes
 		self.model.add(layers.Dense(21, activation=activations.softmax))
-		self.optimizer = optimizers.Adam(learning_rate=0.00001)
+
+		self.lr_scheduler = optimizers.schedules.ExponentialDecay(
+			initial_learning_rate=0.00001,
+			# number of batches per epoch * number of epochs you want to decay over
+			decay_steps=180,
+			decay_rate=0.1, # adjust decay rate to be lower is less epochs (currently 0.1 for 11500 epochs)
+		)
+		self.optimizer = optimizers.Adam(learning_rate=self.lr_scheduler)
+		# self.optimizer = optimizers.Adam(learning_rate=0.00001)
 		self.loss = losses.CategoricalCrossentropy()
 		self.model.compile(
 			loss = self.loss,
@@ -152,7 +161,7 @@ for pokemon in class_names:
 
 	# Did checkpoints every 2 epochs up to 40.
 	#   or every 4 epochs up to 80 or every 8 up to 200 or every 10 to 380.
-	for k in range(40, 321, 40):
+	for k in range(0, 30, 1):
 		# Set up the architecture and load in the checkpoint weights
 		net = Net((SZ, SZ, 3))
 		# print(net)

@@ -103,12 +103,12 @@ class Model:
 		tf.keras.layers.Dropout(0.3, noise_shape=None, seed=None,)
 		self.model.add(layers.Dense(512, activation=activations.relu))
 		# Size of last Dense layer MUST match # of classes
-		self.model.add(layers.Dense(21, activation=activations.softmax))
+		self.model.add(layers.Dense(17, activation=activations.softmax))
 
 		self.lr_scheduler = optimizers.schedules.ExponentialDecay(
 			initial_learning_rate=0.00001,
 			# number of batches per epoch * number of epochs you want to decay over
-			decay_steps=180,
+			decay_steps=3030,
 			decay_rate=0.1, # adjust decay rate to be lower is less epochs (currently 0.1 for 11500 epochs)
 		)
 		self.optimizer = optimizers.Adam(learning_rate=self.lr_scheduler)
@@ -126,42 +126,42 @@ model = Model((239, 239, 3))
 model.model.summary()
 
 save_path = "model/"
-plotHistoryPath = "modelHistory.json"
+plotHistoryPath = "bugHistory.json"
 
-train, validation = utils.image_dataset_from_directory(
-	'keptPokemon',
+# train, validation = utils.image_dataset_from_directory(
+# 	'keptPokemon',
+# 	label_mode = 'categorical',
+# 	batch_size = 256,
+# 	image_size = (239, 239),
+# 	seed = 69,
+# 	validation_split = 0.15,
+# 	subset = 'both'
+# )
+
+train = utils.image_dataset_from_directory(
+	'train',
 	label_mode = 'categorical',
-	batch_size = 256,
-	image_size = (239, 239),
-	seed = 69,
-	validation_split = 0.15,
-	subset = 'both'
+	image_size = (239, 239)
 )
 
-# train = utils.image_dataset_from_directory(
-# 	'train',
-# 	label_mode = 'categorical',
-# 	image_size = (239, 239)
-# )
-
-# validation = utils.image_dataset_from_directory(
-# 	'valid',
-# 	label_mode = 'categorical',
-# 	image_size = (239, 239)
-# )
+validation = utils.image_dataset_from_directory(
+	'valid',
+	label_mode = 'categorical',
+	image_size = (239, 239)
+)
 
 train = train.cache().prefetch(buffer_size = data.AUTOTUNE)
 validation = validation.cache().prefetch(buffer_size = data.AUTOTUNE)
 
 # load previous weights if they exist
-model.model.load_weights(save_path)
+# model.model.load_weights(save_path)
 
 cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weights_only = True, verbose = 1)
 
 history = model.model.fit(
 	train,
 	batch_size = 256,
-	epochs = 30,
+	epochs = 15,
 	verbose = 1,
 	validation_data = validation,
 	validation_batch_size = 32
