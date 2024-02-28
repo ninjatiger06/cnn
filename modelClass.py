@@ -104,7 +104,14 @@ class Model:
 		self.model.add(layers.Dense(512, activation=activations.relu))
 		# Size of last Dense layer MUST match # of classes
 		self.model.add(layers.Dense(21, activation=activations.softmax))
-		self.optimizer = optimizers.Adam(learning_rate=0.00001)
+
+		self.lr_scheduler = optimizers.schedules.ExponentialDecay(
+			initia_learning_rate=0.00001,
+			# number of batches per epoch * number of epochs you want to decay over
+			decay_steps=11500,
+			decay_rate=0.1, # adjust decay rate to be lower is less epochs (currently 0.1 for 11500 epochs)
+		)
+		self.optimizer = optimizers.Adam(learning_rate=self.lr_scheduler)
 		self.loss = losses.CategoricalCrossentropy()
 		self.model.compile(
 			loss = self.loss,
