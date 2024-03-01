@@ -106,9 +106,9 @@ class Model:
 		self.model.add(layers.Dense(17, activation=activations.softmax))
 
 		self.lr_scheduler = optimizers.schedules.ExponentialDecay(
-			initial_learning_rate=0.00001,
+			initial_learning_rate=0.000005,
 			# number of batches per epoch * number of epochs you want to decay over
-			decay_steps=3030,
+			decay_steps=10100,
 			decay_rate=0.1, # adjust decay rate to be lower is less epochs (currently 0.1 for 11500 epochs)
 		)
 		self.optimizer = optimizers.Adam(learning_rate=self.lr_scheduler)
@@ -161,7 +161,7 @@ cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weigh
 history = model.model.fit(
 	train,
 	batch_size = 256,
-	epochs = 15,
+	epochs = 50,
 	verbose = 1,
 	validation_data = validation,
 	validation_batch_size = 32

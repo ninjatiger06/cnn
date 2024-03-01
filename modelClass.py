@@ -106,7 +106,7 @@ class Model:
 		self.model.add(layers.Dense(21, activation=activations.softmax))
 
 		self.lr_scheduler = optimizers.schedules.ExponentialDecay(
-			initial_learning_rate=0.00001,
+			initial_learning_rate=0.000001,
 			# number of batches per epoch * number of epochs you want to decay over
 			decay_steps=180,
 			decay_rate=0.1, # adjust decay rate to be lower is less epochs (currently 0.1 for 11500 epochs)
