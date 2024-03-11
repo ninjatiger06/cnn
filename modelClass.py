@@ -9,6 +9,34 @@ import tensorflow.data as data
 from os import listdir
 import os.path
 
+def saveStuff(model, save_path, plotHistoryPath, history):
+	print(f"Saving model to {save_path}")
+	model.model.save(save_path)
+
+	import json
+	print(f"Saving training history to {plotHistoryPath}")
+
+	old_history = {
+		"accuracy": [],
+		"loss": [],
+		"val_accuracy": [],
+		"val_loss": [],
+	}
+	try:
+		with open(plotHistoryPath, "r") as f:
+			old_history = json.load(f)
+	except (FileNotFoundError, json.decoder.JSONDecodeError):
+		pass
+
+	if old_history is not None:
+		old_history["accuracy"] += history.history["accuracy"]
+		old_history["loss"] += history.history["loss"]
+		old_history["val_accuracy"] += history.history["val_accuracy"]
+		old_history["val_loss"] += history.history["val_loss"]
+
+	with open(plotHistoryPath, "w") as f:
+		json.dump(old_history, f, indent=4)
+
 class Model:
 	def __init__(self, input_size):
 		self.model = tf.keras.Sequential()
@@ -157,39 +185,19 @@ validation = validation.cache().prefetch(buffer_size = data.AUTOTUNE)
 model.model.load_weights(save_path)
 
 cpCallback = tf.keras.callbacks.ModelCheckpoint(filepath = save_path, save_weights_only = True, verbose = 1)
+csv_logger = callbacks.CSVLogger('history.csv')
 
-history = model.model.fit(
-	train,
-	batch_size = 256,
-	epochs = 30,
-	verbose = 1,
-	validation_data = validation,
-	validation_batch_size = 32
-)
-
-print(f"Saving model to {save_path}")
-model.model.save(save_path)
-
-import json
-print(f"Saving training history to {plotHistoryPath}")
-
-old_history = {
-	"accuracy": [],
-	"loss": [],
-	"val_accuracy": [],
-	"val_loss": [],
-}
 try:
-	with open(plotHistoryPath, "r") as f:
-		old_history = json.load(f)
-except (FileNotFoundError, json.decoder.JSONDecodeError):
-	pass
-
-if old_history is not None:
-	old_history["accuracy"] += history.history["accuracy"]
-	old_history["loss"] += history.history["loss"]
-	old_history["val_accuracy"] += history.history["val_accuracy"]
-	old_history["val_loss"] += history.history["val_loss"]
-
-with open(plotHistoryPath, "w") as f:
-	json.dump(old_history, f, indent=4)
+	history = model.model.fit(
+		train,
+		batch_size = 256,
+		epochs = 30,
+		verbose = 1,
+		validation_data = validation,
+		validation_batch_size = 32,
+		callbacks = [cpCallback, csv_logger]
+	)
+except KeyboardInterrupt:
+	saveStuff(model, save_path, plotHistoryPath, history)
+else:
+	saveStuff(model, save_path, plotHistoryPath, history)
